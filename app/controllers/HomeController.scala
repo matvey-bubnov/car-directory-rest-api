@@ -22,14 +22,20 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Ok(views.html.index("Car Directory"))
   }
 
-  def getAll() = Action {
-    Ok(Json.toJson(DB.all()))
+  def getAllCars() = Action {
+    Ok(Json.toJson(DB.allCars()))
+  }
+
+  def deleteCar(id: Long) = Action {
+    DB.delCar(id)
+    Ok
   }
 
   def jsRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.HomeController.getAll
+        routes.javascript.HomeController.getAllCars,
+        routes.javascript.HomeController.deleteCar
       )).as("text/javascript")
   }
 }

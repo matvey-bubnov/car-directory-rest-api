@@ -6,7 +6,9 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
-GET /phones controllers.HomeController.getAll
+GET /cars controllers.HomeController.getAllCars
+
+DELETE /car/:id controllers.HomeController.deleteCar(id:Long)
 
 GET /jsr                          controllers.HomeController.jsRoutes
 

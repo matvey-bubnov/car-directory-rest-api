@@ -1,8 +1,5 @@
 package controllers
 
-import java.sql.Timestamp
-import java.time.LocalDateTime
-
 import models._
 
 import scala.slick.driver.PostgresDriver.simple._
@@ -20,9 +17,7 @@ trait Database {
 
   lazy val db = Database.forURL(HomeController.dbUrl, driver = "org.postgresql.Driver")
 
-
-
-  def all(): List[Car] = {
+  def allCars(): List[Car] = {
     db.withSession{
       implicit session =>
         val phones = TableQuery[CarDirectory]
@@ -31,7 +26,16 @@ trait Database {
     }
   }
 
+  def delCar(id: Long): Unit = {
+    db.withSession{
+      implicit session =>
+        val phones = TableQuery[CarDirectory]
 
+        phones
+          .filter(_.id === id)
+          .delete
+    }
+  }
 
 }
 
