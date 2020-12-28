@@ -5,13 +5,23 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.12.10"
 
 libraryDependencies += guice
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 
-// Adds additional packages into Twirl
-//TwirlKeys.templateImports += "com.company.controllers._"
+libraryDependencies ++= Seq(
+  "org.postgresql" % "postgresql" % "9.3-1100-jdbc4",
+  "com.typesafe.slick" %% "slick" % "2.1.0"
+)
 
-// Adds additional packages into conf/routes
-// play.sbt.routes.RoutesKeys.routesImport += "com.company.binders._"
+libraryDependencies ++= Seq(
+  jdbc,
+  ws,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
+  "com.netflix.rxjava" % "rxjava-scala" % "0.20.7"
+)
+
+libraryDependencies += "org.webjars" % "jquery" % "2.1.3"
+
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.18"
+

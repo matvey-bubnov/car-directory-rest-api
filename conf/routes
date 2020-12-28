@@ -6,5 +6,9 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
+GET /phones controllers.HomeController.getAll
+
+GET /jsr                          controllers.HomeController.jsRoutes
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
