@@ -4,8 +4,10 @@ import java.io.FileInputStream
 import java.util.Properties
 
 import javax.inject._
-import models.Car
+import models.{Car, CarForm}
 import play.api._
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -21,13 +23,40 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
 
   implicit val writes: Writes[Car] = Json.writes[Car]
 
-  def index() = Action { implicit request: Request[AnyContent] =>
+  val carForm: Form[CarForm] = Form(
+    mapping(
+      "carNumber" -> text,
+      "carModel" -> text,
+      "carColor" -> text,
+      "carYear" -> number
+    )(CarForm.apply)(CarForm.unapply))
+
+  def index() = Action { implicit request =>
     Ok(views.html.index("Car Directory"))
   }
 
   def getAllCars() = Action.async {
     val future = Future( Json.toJson(DB.allCars()) )
     future.map(Ok(_))
+  }
+
+  def searchCars(number: String) = Action {
+    Ok(
+      Json.toJson(
+        //DB.searchCar(number, model, color, year)
+        DB.searchCar(number)
+      )
+    )
+  }
+
+  def addNewCar()= Action { implicit request =>
+    carForm.bindFromRequest.fold(
+      _ => { BadRequest(views.html.index("Car Directory")) },
+      car => {
+        DB.addCar(car)
+        Redirect(routes.HomeController.index)
+      }
+    )
   }
 
   def deleteCar(id: Long) = Action.async {
@@ -39,6 +68,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
         routes.javascript.HomeController.getAllCars,
+        routes.javascript.HomeController.searchCars,
+        routes.javascript.HomeController.addNewCar,
         routes.javascript.HomeController.deleteCar
       )).as("text/javascript")
   }

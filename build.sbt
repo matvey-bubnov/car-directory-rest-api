@@ -25,3 +25,4 @@ libraryDependencies += "org.webjars" % "jquery" % "2.1.3"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.18"
 
+routesGenerator := InjectedRoutesGenerator

@@ -26,6 +26,27 @@ trait Database {
     }
   }
 
+  def searchCar(number: String = "", model: String = "", color: String = "", year: Integer = null): List[Car] = {
+    db.withSession{
+      implicit session =>
+        val phones = TableQuery[CarDirectory]
+
+        phones
+          .filter(_.number like s"%$number%")
+          .list.map { case (id, number, model, color, year) => Car(id, number, model, color, year) }
+    }
+  }
+
+  def addCar(form: CarForm): Unit = {
+    db.withSession{
+      implicit session =>
+        val phones = TableQuery[CarDirectory]
+
+        phones
+          .map(car => (car.number, car.model, car.color, car.year)) += (form.number, form.model, form.color, form.year)
+    }
+  }
+
   def delCar(id: Long): Unit = {
     db.withSession{
       implicit session =>

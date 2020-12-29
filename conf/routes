@@ -8,6 +8,10 @@ GET     /                           controllers.HomeController.index
 
 GET /cars controllers.HomeController.getAllCars
 
+GET /car/searchCars controllers.HomeController.searchCars(filterNumber:String, filterModel:String)
+
+POST /car/addNewCar controllers.HomeController.addNewCar
+
 DELETE /car/:id controllers.HomeController.deleteCar(id:Long)
 
 GET /jsr                          controllers.HomeController.jsRoutes

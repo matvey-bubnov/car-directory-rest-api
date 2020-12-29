@@ -14,15 +14,44 @@
 <body>
 
 <table>
-  <tr >
+  <tr>
     <td colspan="2" align="center"><b>Car Directory</b></td>
   </tr>
-
+  <tr>
+    <td>Number:</td>
+    <td><input type="text" value="АА999А96" id="input_number"></td>
+  </tr>
+  <tr>
+    <td>Model:</td>
+    <td><input type="text" value="Kia Rio" id="input_model"></td>
+  </tr>
+  <tr>
+    <td>Color:</td>
+    <td><input type="text" value="White" id="input_color"></td>
+  </tr>
+  <tr>
+    <td>Year:</td>
+    <td><input type="number" value="2020" id="input_year"></td>
+  </tr>
 </table>
+
+<input type="button" value="Save to Directory" id="add_car" >
+<br>
+<span> Current status: </span>
+<span  id="status"></span>
 <br>
 
-<td align="center"><input type="button" value="Refresh Table" id="all" ></td>
+<br>
+<td align="center"><input type="button" value="Refresh Table" id="search_car" ></td>
+
+<table>
+  <tr>
+<div id="header_table"></div>
+  </tr>
+  <tr>
 <div id="main_table"></div>
+  </tr>
+</table>
 
 </body>
 </html>
