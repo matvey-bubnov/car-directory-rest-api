@@ -9,6 +9,9 @@ import play.api._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
@@ -22,13 +25,14 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Ok(views.html.index("Car Directory"))
   }
 
-  def getAllCars() = Action {
-    Ok(Json.toJson(DB.allCars()))
+  def getAllCars() = Action.async {
+    val future = Future( Json.toJson(DB.allCars()) )
+    future.map(Ok(_))
   }
 
-  def deleteCar(id: Long) = Action {
-    DB.delCar(id)
-    Ok
+  def deleteCar(id: Long) = Action.async {
+    Future( DB.delCar(id) )
+    Future(Ok)
   }
 
   def jsRoutes = Action { implicit request =>
