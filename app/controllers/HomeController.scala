@@ -8,6 +8,7 @@ import models.{Car, CarForm}
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -40,28 +41,29 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     future.map(Ok(_))
   }
 
-  def searchCars(number: String) = Action {
-    Ok(
-      Json.toJson(
-        //DB.searchCar(number, model, color, year)
-        DB.searchCar(number)
-      )
-    )
+  def searchCars(number: String, model: String, color: String, year: Option[Int]) = Action.async {
+    val future = Future( Json.toJson(DB.searchCar(number, model, color, year)) )
+    future.map(Ok(_))
   }
 
   def addNewCar()= Action { implicit request =>
     carForm.bindFromRequest.fold(
       _ => { BadRequest(views.html.index("Car Directory")) },
-      car => {
-        DB.addCar(car)
+      form => {
+        DB.addCar(form)
         Redirect(routes.HomeController.index)
       }
     )
   }
 
   def deleteCar(id: Long) = Action.async {
-    Future( DB.delCar(id) )
-    Future(Ok)
+    val future = Future( DB.delCar(id) )
+    future.map{ isDeleted =>
+      if (isDeleted)
+        Ok
+      else
+        BadRequest("Entry not found")
+    }
   }
 
   def jsRoutes = Action { implicit request =>

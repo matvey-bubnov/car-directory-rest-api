@@ -20,19 +20,26 @@ trait Database {
   def allCars(): List[Car] = {
     db.withSession{
       implicit session =>
-        val phones = TableQuery[CarDirectory]
+        val cars = TableQuery[CarDirectory]
 
-        phones.list.map { case (id, number, model, color, year) => Car(id, number, model, color, year) }
+        cars
+          .sortBy(_.number)
+          .list
+          .map { case (id, number, model, color, year) => Car(id, number, model, color, year) }
     }
   }
 
-  def searchCar(number: String = "", model: String = "", color: String = "", year: Integer = null): List[Car] = {
+  def searchCar(number: String, model: String, color: String, year: Option[Int]): List[Car] = {
     db.withSession{
       implicit session =>
-        val phones = TableQuery[CarDirectory]
+        val cars = TableQuery[CarDirectory]
 
-        phones
-          .filter(_.number like s"%$number%")
+        cars
+          .filter(_.number.toLowerCase like s"%${number.toLowerCase}%")
+          .filter(_.model.toLowerCase like s"%${model.toLowerCase}%")
+          .filter(_.color.toLowerCase like s"%${color.toLowerCase}%")
+          .filter(_.year === year || year.isEmpty)
+          .sortBy(_.number)
           .list.map { case (id, number, model, color, year) => Car(id, number, model, color, year) }
     }
   }
@@ -40,21 +47,25 @@ trait Database {
   def addCar(form: CarForm): Unit = {
     db.withSession{
       implicit session =>
-        val phones = TableQuery[CarDirectory]
+        val cars = TableQuery[CarDirectory]
 
-        phones
+        cars
           .map(car => (car.number, car.model, car.color, car.year)) += (form.number, form.model, form.color, form.year)
     }
   }
 
-  def delCar(id: Long): Unit = {
+  def delCar(id: Long): Boolean = {
     db.withSession{
       implicit session =>
-        val phones = TableQuery[CarDirectory]
+        val cars = TableQuery[CarDirectory]
 
-        phones
-          .filter(_.id === id)
-          .delete
+        val car = cars.filter(_.id === id)
+        car.firstOption match {
+          case Some(_) =>
+            car.delete
+            true
+          case _ => false
+        }
     }
   }
 

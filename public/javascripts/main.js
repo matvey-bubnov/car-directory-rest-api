@@ -29,7 +29,7 @@ $(document).ready(function() {
             data: JSON.stringify(carForm),
             complete: function() {
                 $("#status").text(carForm.carNumber + ' saved');
-                $.all();
+                $.search();
             },
             failure: function(err) {
                 $("#status").text('Saving error');
@@ -45,7 +45,7 @@ $(document).ready(function() {
         table += '<td width="20%"><input type="text" id="filter_number" title="Filter by Number"  style="width: 90%;"></td>';
         table += '<td width="20%"><input type="text" id="filter_model" title="Filter by Model" style="width: 90%;"></td>';
         table += '<td width="20%"><input type="text" id="filter_color" title="Filter by Color" style="width: 90%;"></td>';
-        table += '<td width="20%"><input type="text" id="filter_year" title="Filter by Year" style="width: 90%;"></td>';
+        table += '<td width="20%"><input type="number" min="0" id="filter_year" title="Filter by Year" style="width: 90%;"></td>';
         table += '</tr>';
         table += "</table>"
         $('#header_table').append(table);
@@ -77,20 +77,23 @@ $(document).ready(function() {
             type: 'DELETE',
             success: function() {
                 $("#status").text(name + ' deleted');
-                $.all();
+                $.search();
             },
-            failure: function(err) {
-                $("#status").text('Delete error');
+            error: function(err) {
+                $("#status").text(err.responseText);
             }
         });
     });
 
     $('#search_car').click(function() {
+        $.search();
+    });
+    $.search = function() {
         var filterNumber = $("#filter_number").val();
         var filterModel = $("#filter_model").val();
         var filterColor = $("#filter_color").val();
         var filterYear = $("#filter_year").val();
-        jsRoutes.controllers.HomeController.searchCars(filterNumber).ajax({
+        jsRoutes.controllers.HomeController.searchCars(filterNumber, filterModel, filterColor, filterYear).ajax({
             success: function(result) {
                 createTable(result);
             },
@@ -98,7 +101,7 @@ $(document).ready(function() {
                 $("#status").text('Refresh error');
             }
         });
-    });
+    }
 
     createHeader();
     $.all();
