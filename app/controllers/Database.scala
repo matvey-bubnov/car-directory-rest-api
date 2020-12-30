@@ -44,13 +44,21 @@ trait Database {
     }
   }
 
-  def addCar(form: CarForm): Unit = {
+  def addCar(form: CarForm): Boolean = {
     db.withSession{
       implicit session =>
         val cars = TableQuery[CarDirectory]
 
-        cars
-          .map(car => (car.number, car.model, car.color, car.year)) += (form.number, form.model, form.color, form.year)
+        val car = cars.filter(_.number === form.number)
+        car.firstOption match {
+          case Some(_) =>
+            false
+          case _ =>
+            cars
+              .map(car => (car.number, car.model, car.color, car.year)) += (form.number, form.model, form.color, form.year)
+            true
+        }
+
     }
   }
 

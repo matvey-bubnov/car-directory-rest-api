@@ -8,7 +8,7 @@ $(document).ready(function() {
             success: function(result) {
                 createTable(result);
             },
-            failure: function(err) {
+            error: function(err) {
                 $("#status").text('Refresh error');
             }
         });
@@ -28,11 +28,11 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify(carForm),
             complete: function() {
-                $("#status").text(carForm.carNumber + ' saved');
+                $("#status").text(carForm.carNumber + ' saved!');
                 $.search();
             },
-            failure: function(err) {
-                $("#status").text('Saving error');
+            error: function(err) {
+                $("#status").text(err.responseText);
             }
         });
     });
@@ -97,7 +97,7 @@ $(document).ready(function() {
             success: function(result) {
                 createTable(result);
             },
-            failure: function(err) {
+            error: function(err) {
                 $("#status").text('Refresh error');
             }
         });

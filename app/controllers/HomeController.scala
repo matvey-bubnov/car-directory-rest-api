@@ -46,13 +46,17 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     future.map(Ok(_))
   }
 
-  def addNewCar()= Action { implicit request =>
+  def addNewCar()= Action.async { implicit request =>
     carForm.bindFromRequest.fold(
-      _ => { BadRequest(views.html.index("Car Directory")) },
-      form => {
-        DB.addCar(form)
-        Redirect(routes.HomeController.index)
-      }
+      _ => Future( BadRequest("Errors in form") ),
+      form =>
+        Future( DB.addCar(form) )
+          .map{ isAdded =>
+            if (isAdded)
+              Ok
+            else
+              BadRequest("Number already exists")
+          }
     )
   }
 
