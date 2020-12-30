@@ -12,9 +12,17 @@ $(document).ready(function() {
     }
 
     $.count = function() {
-        jsRoutes.controllers.HomeController.countCars().ajax({
+        jsRoutes.controllers.HomeController.statistics().ajax({
             success: function(result) {
-                $("#count").text(result);
+                var [count, first, last] = result
+                var first_date = new Date(first);
+                var formated_first_date = first_date.toDateString();
+                var last_date = new Date(last);
+                var formated_last_date = last_date.toDateString();
+                if (count > 0)
+                    $("#statistics").text('Entries: ' + count + ' | First at: ' + formated_first_date + ' | Last at: ' + formated_last_date);
+                else
+                    $("#statistics").text('Empty Directory')
             }
         });
     }

@@ -8,7 +8,6 @@ import models.{Car, CarForm}
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc._
 import play.api.routing.JavaScriptReverseRouter
@@ -37,21 +36,21 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   def getAllCars() = Action.async {
-    val future = Future( Json.toJson(DB.allCars()) )
-    future.map(Ok(_))
+    Future(Json.toJson(DB.allCars()))
+      .map(Ok(_))
   }
 
   def searchCars(number: String, model: String, color: String, year: Option[Int]) = Action.async {
-    val future = Future( Json.toJson(DB.searchCar(number, model, color, year)) )
-    future.map(Ok(_))
+    Future(Json.toJson(DB.searchCar(number, model, color, year)))
+      .map(Ok(_))
   }
 
   def addNewCar()= Action.async { implicit request =>
     carForm.bindFromRequest.fold(
-      _ => Future( BadRequest("Errors in form") ),
+      _ => Future(BadRequest("Errors in form")),
       form =>
-        Future( DB.addCar(form) )
-          .map{ isAdded =>
+        Future(DB.addCar(form))
+          .map { isAdded =>
             if (isAdded)
               Ok
             else
@@ -61,17 +60,17 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   def deleteCar(id: Long) = Action.async {
-    val future = Future( DB.delCar(id) )
-    future.map{ isDeleted =>
-      if (isDeleted)
-        Ok
-      else
-        BadRequest("Entry not found")
-    }
+    Future(DB.delCar(id))
+      .map { isDeleted =>
+        if (isDeleted)
+          Ok
+        else
+          BadRequest("Entry not found")
+      }
   }
 
-  def countCars() = Action.async {
-    Future( Json.toJson(DB.countCars()) )
+  def statistics() = Action.async {
+    Future(Json.toJson(DB.statistics()))
       .map(Ok(_))
   }
 
@@ -82,7 +81,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         routes.javascript.HomeController.searchCars,
         routes.javascript.HomeController.addNewCar,
         routes.javascript.HomeController.deleteCar,
-        routes.javascript.HomeController.countCars
+        routes.javascript.HomeController.statistics
       )).as("text/javascript")
   }
 }
