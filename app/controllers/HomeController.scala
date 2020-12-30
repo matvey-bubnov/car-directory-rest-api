@@ -70,13 +70,19 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     }
   }
 
+  def countCars() = Action.async {
+    Future( Json.toJson(DB.countCars()) )
+      .map(Ok(_))
+  }
+
   def jsRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
         routes.javascript.HomeController.getAllCars,
         routes.javascript.HomeController.searchCars,
         routes.javascript.HomeController.addNewCar,
-        routes.javascript.HomeController.deleteCar
+        routes.javascript.HomeController.deleteCar,
+        routes.javascript.HomeController.countCars
       )).as("text/javascript")
   }
 }

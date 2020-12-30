@@ -1,8 +1,5 @@
 $(document).ready(function() {
 
-    $('#all').click(function() {
-        $.all();
-    });
     $.all = function() {
         jsRoutes.controllers.HomeController.getAllCars().ajax({
             success: function(result) {
@@ -10,6 +7,14 @@ $(document).ready(function() {
             },
             error: function(err) {
                 $("#status").text('Refresh error');
+            }
+        });
+    }
+
+    $.count = function() {
+        jsRoutes.controllers.HomeController.countCars().ajax({
+            success: function(result) {
+                $("#count").text(result);
             }
         });
     }
@@ -101,9 +106,11 @@ $(document).ready(function() {
                 $("#status").text('Refresh error');
             }
         });
+        $.count();
     }
 
     createHeader();
     $.all();
+    $.count();
 
 });

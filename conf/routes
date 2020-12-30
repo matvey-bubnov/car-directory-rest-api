@@ -10,6 +10,8 @@ GET /cars controllers.HomeController.getAllCars
 
 GET /car/searchCars controllers.HomeController.searchCars(filterNumber:String, filterModel:String, filterColor:String, filterYear: Option[Int])
 
+GET /cars/countCars controllers.HomeController.countCars
+
 POST /car/addNewCar controllers.HomeController.addNewCar
 
 DELETE /car/:id controllers.HomeController.deleteCar(id:Long)
